@@ -30,6 +30,6 @@ const volunteerSchema = new mongoose.Schema({
   }],
 }, { timestamps: true });
 
-volunteerSchema.index({ user: 1 });
+//volunteerSchema.index({ user: 1 });
 
 module.exports = mongoose.model('Volunteer', volunteerSchema);

@@ -42,6 +42,6 @@ const opportunitySchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-opportunitySchema.index({ category: 1, isActive: 1, deadline: 1 });
+//opportunitySchema.index({ category: 1, isActive: 1, deadline: 1 });
 
 module.exports = mongoose.model('Opportunity', opportunitySchema);

@@ -59,8 +59,8 @@ const matchRequestSchema = new mongoose.Schema({
 });
 
 // Indexes for performance
-matchRequestSchema.index({ talent: 1, status: 1 });
-matchRequestSchema.index({ opportunity: 1 });
-matchRequestSchema.index({ status: 1, createdAt: -1 });
+// matchRequestSchema.index({ talent: 1, status: 1 });
+// matchRequestSchema.index({ opportunity: 1 });
+// matchRequestSchema.index({ status: 1, createdAt: -1 });
 
 module.exports = mongoose.model('MatchRequest', matchRequestSchema);

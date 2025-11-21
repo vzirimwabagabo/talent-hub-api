@@ -36,6 +36,6 @@ const talentProfileSchema = new mongoose.Schema({
   }]
 }, { timestamps: true });
 
-talentProfileSchema.index({ user: 1 });
+//talentProfileSchema.index({ user: 1 });
 
 module.exports = mongoose.model('TalentProfile', talentProfileSchema);
