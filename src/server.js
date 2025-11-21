@@ -16,7 +16,6 @@ const fs = require('fs');
 
 const { errorHandler } = require('./middlewares/errorHandlerMiddleware');
 const languageRoutes = require('./routes/languageRoutes');
-const Opportunity = require("./models/Opportunity");
 
 const app = express();
 
@@ -94,8 +93,14 @@ app.use('/api/v1/languages', languageRoutes);
 
 app.get('/', async (req, res) => {
   try {
-    const opportunities = await Opportunity.find({}).limit(5);
-    res.json({ opportunities });
+    //const opportunities = await Opportunity.find({}).limit(5);
+    res.json({ 
+      api:"Zavala LMT",
+      motDuJour: "Just learn to code every day",
+      last:"Welcome to talent hub api",
+      status:"WORKING AS EXPECTED 😂😂😂😂 !!"
+
+     });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Server error" });
