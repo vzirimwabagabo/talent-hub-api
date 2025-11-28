@@ -1,25 +1,53 @@
+// src/services/reviewService.js
 const Review = require('../models/Review');
 
-async function createReview(data) {
+exports.createReview = async (data) => {
   const review = new Review(data);
   return await review.save();
-}
+};
 
-async function getReviewsByTalent(talentId) {
-  return await Review.find({ talentProfile: talentId }).populate('reviewer', 'name email');
-}
+exports.getReviewsByReviewer = async (reviewerId) => {
+  return await Review.find({ reviewer: reviewerId })
+    .populate('talentProfile', 'title name')
+    .populate('reviewer', 'name');
+};
 
-async function updateReview(id, data) {
-  return await Review.findByIdAndUpdate(id, data, { new: true, runValidators: true });
-}
+exports.getReviewsByTalent = async (talentId) => {
+  return await Review.find({ talentProfile: talentId })
+    .populate('reviewer', 'name')
+    .sort({ createdAt: -1 });
+};
 
-async function deleteReview(id) {
-  return await Review.findByIdAndDelete(id);
-}
+exports.getAllReviews = async () => {
+  return await Review.find()
+    .populate('talentProfile')
+    .populate('reviewer', 'name')
+    .sort({ createdAt: -1 });
+};
 
-module.exports = {
-  createReview,
-  getReviewsByTalent,
-  updateReview,
-  deleteReview,
+// ✅ Single, consistent deleteReview
+exports.deleteReview = async (id, userId) => {
+  const review = await Review.findById(id);
+  if (!review) {
+    throw new Error('Review not found');
+  }
+  if (review.reviewer.toString() !== userId.toString()) {
+    throw new Error('Not authorized');
+  }
+  await Review.findByIdAndDelete(id);
+  return review;
+};
+
+exports.updateReview = async (id, userId, updateData) => {
+  const review = await Review.findById(id);
+  if (!review) {
+    throw new Error('Review not found');
+  }
+  if (review.reviewer.toString() !== userId.toString()) {
+    throw new Error('Not authorized');
+  }
+  return await Review.findByIdAndUpdate(id, updateData, {
+    new: true,
+    runValidators: true,
+  });
 };

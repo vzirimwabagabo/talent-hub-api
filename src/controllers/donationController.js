@@ -1,24 +1,60 @@
+// src/controllers/donationController.js
 const donationService = require('../services/donationService');
 
-// Create a new donation
 exports.createDonation = async (req, res, next) => {
   try {
-    const { amount, currency, message } = req.body;
-    const donor = req.user._id;
+    const { amount, description } = req.body;
+    // Ensure amount is a number
+    const numAmount = Number(amount);
+    if (isNaN(numAmount) || numAmount < 1) {
+      return res.status(400).json({ success: false, message: 'Invalid amount' });
+    }
 
-    const donation = await donationService.createDonation(donor, amount, currency, message);
-    res.status(201).json({ success: true, data: donation });
+    const donation = await donationService.createDonation(
+      req.user._id,
+      numAmount,
+      description
+    );
+    res.status(201).json({ success: true, donation });
   } catch (error) {
     next(error);
   }
 };
 
-// List all donations (admin or authorized users only)
+exports.getUserDonations = async (req, res, next) => {
+  try {
+    const donations = await donationService.getUserDonations(req.user._id);
+    res.status(200).json({ success: true, donations });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.getAllDonations = async (req, res, next) => {
   try {
-    // Authorization check can be done here or middleware
     const donations = await donationService.getAllDonations();
-    res.status(200).json({ success: true, data: donations });
+    res.status(200).json({ success: true, donations });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getDonationById = async (req, res, next) => {
+  try {
+    const donation = await donationService.getDonationById(req.params.id);
+    if (!donation) {
+      return res.status(404).json({ success: false, message: 'Donation not found' });
+    }
+    res.status(200).json({ success: true, donation });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.deleteDonation = async (req, res, next) => {
+  try {
+    await donationService.deleteDonation(req.params.id);
+    res.status(200).json({ success: true, message: 'Donation deleted' });
   } catch (error) {
     next(error);
   }

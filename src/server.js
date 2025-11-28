@@ -1,5 +1,4 @@
 // src/server.js
-
 // Load environment variables
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
@@ -19,9 +18,7 @@ const languageRoutes = require('./routes/languageRoutes');
 
 const app = express();
 
-// ==================================================
 // SECURITY & MIDDLEWARE
-// ==================================================
 app.use(helmet());
 
 app.use(
@@ -33,11 +30,9 @@ app.use(
     credentials: true,
   })
 );
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('tiny'));
-
 app.use(
   '/api/',
   rateLimit({
@@ -45,12 +40,8 @@ app.use(
     max: 100,
   })
 );
-
-// ==================================================
 // DYNAMIC ROUTES
-// ==================================================
 const routesDir = path.join(__dirname, 'routes');
-
 fs.readdirSync(routesDir).forEach((file) => {
   if (file.endsWith('Routes.js')) {
     const route = require(`./routes/${file}`);
@@ -59,12 +50,7 @@ fs.readdirSync(routesDir).forEach((file) => {
     console.log(`Mounted: /api/v1/${baseName}`);
   }
 });
-
-// ==================================================
-// MONGODB CONNECTION (Vercel-safe)
-// ==================================================
 let isConnected = false;
-
 async function connectDB() {
   if (isConnected) return;
 
@@ -81,16 +67,10 @@ async function connectDB() {
 
   console.log("✅ MongoDB connected");
 }
-
 connectDB().catch(err => console.log(err));
-
-// ==================================================
 // ROUTES
-// ==================================================
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 app.use('/api/v1/languages', languageRoutes);
-
 app.get('/', async (req, res) => {
   try {
     //const opportunities = await Opportunity.find({}).limit(5);
@@ -106,7 +86,6 @@ app.get('/', async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
-
 app.get('/api/health', (_req, res) => {
   res.status(200).json({
     status: 'ok',
@@ -114,10 +93,7 @@ app.get('/api/health', (_req, res) => {
     message: 'TalentHub backend is running!',
   });
 });
-
-// Error handlers
 app.use(errorHandler);
-
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -125,11 +101,6 @@ app.use((req, res) => {
   });
 });
 
-// ==================================================
-// EXPORT FOR VERCEL & LOCAL SERVER STARTUP
-// ==================================================
-
-//Vercel: Do NOT listen on a port
 if (process.env.vercel) {
   console.log("Running on Vercel → exporting app (no listen)");
   module.exports = app;
