@@ -24,7 +24,7 @@ app.use(helmet());
 app.use(
   cors({
     origin: [
-      process.env.CLIENT_URL, "https://talent-hub-ui.vercel.app",
+      process.env.CLIENT_URL, "https://talent-hub-ui.vercel.app/api/v1",
       "http://localhost:5173"
     ],
     credentials: true,
